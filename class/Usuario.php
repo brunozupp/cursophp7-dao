@@ -50,12 +50,7 @@
 
 			if(count($results) > 0) {
 
-				$row = $results[0];
-
-				$this->setId($row['ID']);
-				$this->setLogin($row['login']);
-				$this->setSenha($row['senha']);
-				$this->setDtCadastro(new DateTime($row['dtCadastro']));
+				$this->setData($results[0]);
 			}
 		}
 
@@ -86,16 +81,53 @@
 
 			if(count($results) > 0) {
 
-				$row = $results[0];
+				$this->setData($results[0]);
 
-				$this->setId($row['ID']);
-				$this->setLogin($row['login']);
-				$this->setSenha($row['senha']);
-				$this->setDtCadastro(new DateTime($row['dtCadastro']));
 			} else {
 
 				throw new Exception("Login e/ou senha inválidos.");
 			}
+		}
+
+		public function setData($data) {
+
+			$this->setId($data['ID']);
+			$this->setLogin($data['login']);
+			$this->setSenha($data['senha']);
+			$this->setDtCadastro(new DateTime($data['dtCadastro']));
+		}
+
+		public function insert() {
+
+			$sql = new Sql();
+
+			$results = $sql->select("CALL sp_usuarios_insert(:LOGIN, :PASSWORD)", array(
+				':LOGIN'=>$this->getLogin(),
+				':PASSWORD'=>$this->getSenha()
+			));
+
+			if(count($results) > 0) {
+				$this->setData($results[0]);
+			}
+		}
+
+		public function update($login, $password) {
+
+			$this->setLogin($login);
+			$this->setSenha($password);
+
+			$sql = new Sql();
+
+			$sql->query("UPDATE usuarios SET login = :LOGIN, senha = :PASSWORD WHERE ID = :ID", array(
+				':LOGIN'=>$this->getLogin(),
+				':PASSWORD'=>$this->getSenha(),
+				':ID'=>$this->getId()
+			));
+		}
+
+		public function __construct($login = "", $password = "") { // = "" não é obrigatorio passar o parametro
+			$this->setLogin("aluno2");
+			$this->setSenha("@lun@2");
 		}
 
 		public function __toString() {
