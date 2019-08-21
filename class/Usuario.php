@@ -125,6 +125,20 @@
 			));
 		}
 
+		public function delete() {
+
+			$sql = new Sql();
+
+			$sql->query("DELETE FROM usuarios WHERE ID = :ID", array(
+				':ID'=>$this->getId()
+			));
+
+			$this->setId(0);
+			$this->setLogin("");
+			$this->setSenha("");
+			$this->setDtCadastro(new DateTime());
+		}
+
 		public function __construct($login = "", $password = "") { // = "" não é obrigatorio passar o parametro
 			$this->setLogin("aluno2");
 			$this->setSenha("@lun@2");
